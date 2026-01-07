@@ -1,0 +1,44 @@
+# Provider alert definitions.
+# Format is tool-agnostic and can be translated to your alerting system.
+alerts:
+  - id: provider-error-rate-high
+    name: Provider error rate > 2% (5m)
+    description: Alerts when a provider's error rate exceeds 2% over 5 minutes.
+    severity: high
+    metric: provider_requests_total
+    condition: "(sum(rate(provider_requests_total{status=~'5..'}[5m])) by (provider) / sum(rate(provider_requests_total[5m])) by (provider)) > 0.02"
+    for: 5m
+    labels:
+      team: platform
+      service: providers
+    annotations:
+      summary: "Provider error rate above 2%"
+      runbook: "../runbooks/provider-alerts.md#provider-error-rate-high"
+
+  - id: provider-latency-p95-high
+    name: Provider latency p95 > 1500ms (10m)
+    description: Alerts when provider p95 latency exceeds 1500ms over 10 minutes.
+    severity: high
+    metric: provider_request_duration_seconds
+    condition: "histogram_quantile(0.95, sum(rate(provider_request_duration_seconds_bucket[5m])) by (le, provider)) > 1.5"
+    for: 10m
+    labels:
+      team: platform
+      service: providers
+    annotations:
+      summary: "Provider p95 latency above 1500ms"
+      runbook: "../runbooks/provider-alerts.md#provider-latency-p95-high"
+
+  - id: provider-cache-hit-rate-low
+    name: Provider cache hit rate < 80% (15m)
+    description: Alerts when provider cache hit rate drops below 80% (baseline 90%) over 15 minutes.
+    severity: medium
+    metric: provider_cache_requests_total
+    condition: "(sum(rate(provider_cache_requests_total{result='hit'}[15m])) by (provider) / sum(rate(provider_cache_requests_total[15m])) by (provider)) < 0.80"
+    for: 15m
+    labels:
+      team: platform
+      service: providers
+    annotations:
+      summary: "Provider cache hit rate below 80%"
+      runbook: "../runbooks/provider-alerts.md#provider-cache-hit-rate-low"
