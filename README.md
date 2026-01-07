@@ -1,5 +1,7 @@
 # Vehicle Valuation Connector (VVC)
 
+This document is the source of truth for provider integration guidance; if merge conflicts occur, keep this content and reconcile any provider-specific additions here.
+
 ## 1. Authentication methods and required credentials by provider
 
 | Provider | Auth method | Required credentials | Notes |
